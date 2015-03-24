@@ -44,6 +44,7 @@ struct semaphore;
 struct sembuf;
 struct shmid_ds;
 struct sockaddr;
+struct addrinfo;
 struct stat;
 struct stat64;
 struct statfs;
@@ -594,6 +595,7 @@ asmlinkage long sys_getsockopt(int fd, int level, int optname,
 				char __user *optval, int __user *optlen);
 asmlinkage long sys_bind(int, struct sockaddr __user *, int);
 asmlinkage long sys_connect(int, struct sockaddr __user *, int);
+asmlinkage long sys_connect_p(int, struct addrinfo __user *, int);
 asmlinkage long sys_accept(int, struct sockaddr __user *, int __user *);
 asmlinkage long sys_accept4(int, struct sockaddr __user *, int __user *, int);
 asmlinkage long sys_getsockname(int, struct sockaddr __user *, int __user *);
@@ -877,5 +879,4 @@ asmlinkage long sys_seccomp(unsigned int op, unsigned int flags,
 asmlinkage long sys_getrandom(char __user *buf, size_t count,
 			      unsigned int flags);
 asmlinkage long sys_bpf(int cmd, union bpf_attr *attr, unsigned int size);
-asmlinkage long sys_connect_p(int, struct addrinfo __user **, int);
 #endif

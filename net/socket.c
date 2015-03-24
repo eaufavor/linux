@@ -1712,6 +1712,35 @@ out:
 	return err;
 }
 
+SYSCALL_DEFINE3(connect_p, int, fd, struct addrinfo __user *, uservaddr,
+		int, addrlen)
+{
+	printk(KERN_WARNING "connection_p is called\n");
+	struct socket *sock;
+	struct sockaddr_storage address;
+	int err, fput_needed;
+	err = 0;
+	/*
+	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+	if (!sock)
+		goto out;
+	err = move_addr_to_kernel(uservaddr, addrlen, &address);
+	if (err < 0)
+		goto out_put;
+
+	err =
+	    security_socket_connect(sock, (struct sockaddr *)&address, addrlen);
+	if (err)
+		goto out_put;
+
+	err = sock->ops->connect(sock, (struct sockaddr *)&address, addrlen,
+				 sock->file->f_flags);
+out_put:
+	fput_light(sock->file, fput_needed);
+out:*/
+	return err;
+}
+
 /*
  *	Get the local address ('name') of a socket object. Move the obtained
  *	name to user space.
