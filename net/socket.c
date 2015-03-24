@@ -1720,24 +1720,34 @@ SYSCALL_DEFINE3(connect_p, int, fd, struct addrinfo __user *, uservaddr,
 	struct sockaddr_storage address;
 	int err, fput_needed;
 	err = 0;
-	/*
+	/* TODO: 1 copy the addresses to kernel space
+	 * Question: how to store multiple addresses? array?
+
 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
 	if (!sock)
 		goto out;
 	err = move_addr_to_kernel(uservaddr, addrlen, &address);
 	if (err < 0)
 		goto out_put;
-
+        */
+	/*TODO: what is this? checking permission?
+	 * how about just check once with the first IP address?
 	err =
 	    security_socket_connect(sock, (struct sockaddr *)&address, addrlen);
 	if (err)
 		goto out_put;
-
+	*/
+	/*TODO: real challenge 
+	 * which file?: sock->opt->connect_P(s, addresses, ...)? 
+	 * net/ipv4/tcp_output.c: tcp_connect()
+	 * net/ipv4/tcp_ipv4.c: tcp_v4_connect()
+	 * where SYN-ACK is dealed??
 	err = sock->ops->connect(sock, (struct sockaddr *)&address, addrlen,
 				 sock->file->f_flags);
 out_put:
 	fput_light(sock->file, fput_needed);
 out:*/
+
 	return err;
 }
 
