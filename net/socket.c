@@ -1748,6 +1748,11 @@ out_put:
 	fput_light(sock->file, fput_needed);
 out:*/
 
+	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+	if (!sock)
+		goto out;
+	err = sock->ops->connect_p(NULL, NULL, 0, 0);
+out:
 	return err;
 }
 

@@ -656,6 +656,15 @@ int inet_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 }
 EXPORT_SYMBOL(inet_stream_connect);
 
+int inet_stream_connect_p(struct socket *sock, struct sockaddr *uaddr,
+			int addr_len, int flags)
+{
+	printk(KERN_WARNING "SERHAT: inet_stream_connect_p is called\n");
+	return 0;
+	//TODO
+}
+EXPORT_SYMBOL(inet_stream_connect_p);
+
 /*
  *	Accept a pending connection. The TCP layer now gives BSD semantics.
  */
@@ -900,6 +909,7 @@ const struct proto_ops inet_stream_ops = {
 	.release	   = inet_release,
 	.bind		   = inet_bind,
 	.connect	   = inet_stream_connect,
+	.connect_p	   = inet_stream_connect_p,
 	.socketpair	   = sock_no_socketpair,
 	.accept		   = inet_accept,
 	.getname	   = inet_getname,

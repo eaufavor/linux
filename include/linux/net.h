@@ -135,6 +135,9 @@ struct proto_ops {
 	int		(*connect)   (struct socket *sock,
 				      struct sockaddr *vaddr,
 				      int sockaddr_len, int flags);
+	int		(*connect_p) (struct socket *sock,
+				      struct sockaddr *vaddr,
+				      int sockaddr_len, int flags);
 	int		(*socketpair)(struct socket *sock1,
 				      struct socket *sock2);
 	int		(*accept)    (struct socket *sock,
