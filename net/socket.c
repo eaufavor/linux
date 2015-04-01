@@ -159,6 +159,24 @@ static const struct file_operations socket_file_ops = {
 	.splice_read =	sock_splice_read,
 };
 
+struct addr_node
+{
+	struct sockaddr * addr;
+	int addrlen;
+	struct addr_node * next;
+};
+
+struct addrinfo {
+    int              ai_flags;
+    int              ai_family;
+    int              ai_socktype;
+    int              ai_protocol;
+    int		     ai_addrlen;
+    struct sockaddr *ai_addr;
+    char            *ai_canonname;
+    struct addrinfo *ai_next;
+};
+
 /*
  *	The protocol list. Each protocol is registered in here.
  */
@@ -1720,6 +1738,36 @@ SYSCALL_DEFINE3(connect_p, int, fd, struct addrinfo __user *, uservaddr,
 	struct sockaddr_storage address;
 	int err, fput_needed;
 	err = 0;
+
+	struct addrinfo * index = uservaddr;	
+	struct addr_node * prev = NULL;
+	struct addr_node * head;
+
+	while(index)
+	{
+		err = move_addr_to_kernel(index->ai_addr, index->ai_addrlen, &address);
+		if (err < 0)
+			goto out;
+		struct addr_node * cur = kmalloc(sizeof(*cur), GFP_KERNEL);
+		struct sockaddr_storage * cpy_address = kmalloc(sizeof(*cpy_address), GFP_KERNEL);
+		memcpy(cpy_address, &address, sizeof(address));
+		cur->addr = (struct sockaddr *)cpy_address;
+		cur->addrlen = index->ai_addrlen;
+		cur->next = NULL;
+		if(!prev)
+		{
+			head = cur;
+		}
+		else
+		{
+			prev->next = cur;
+		}
+		prev = cur;
+		index = index->ai_next;
+	}	
+
+	printk(KERN_WARNING "SERHAT Linked list holding the server addresses is built\n");
+
 	/* TODO: 1 copy the addresses to kernel space
 	 * Question: how to store multiple addresses? array?
 

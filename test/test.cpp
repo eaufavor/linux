@@ -18,10 +18,10 @@ long connect_p(int fd, struct addrinfo* ai, int size)
 
 int main(int argc, char *argv[])
 {
-	int err;
+	long int err;
 	int sd;
 
-/*	SERHAT: Test code for getaddrinfo
+//	SERHAT: Test code for getaddrinfo
 	int s;
 	struct addrinfo hints;
 	struct addrinfo *result;
@@ -41,10 +41,9 @@ int main(int argc, char *argv[])
 	{
 		printf("SERHAT: result->ai_addr->sa_family: %d\n", result->ai_addr->sa_family);
 	}
-*/
 
 	sd = socket (AF_INET, SOCK_STREAM, 0);
-	err = connect_p(sd, NULL, 0);	
-	printf("System call returned %ld\n", a);
+	err = connect_p(sd, result, 0);	
+	printf("System call returned %ld\n", err);
 	return 0;
 }
