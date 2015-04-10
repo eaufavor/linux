@@ -1738,16 +1738,33 @@ SYSCALL_DEFINE3(connect_p, int, fd, struct addrinfo __user *, uservaddr,
 	struct sockaddr_storage address;
 	int err, fput_needed;
 	err = 0;
+	int security_connect = 0;
 
 	struct addrinfo * index = uservaddr;	
 	struct addr_node * prev = NULL;
 	struct addr_node * head;
+
+	sock = sockfd_lookup_light(fd, &err, &fput_needed);
+	if (!sock)
+		goto out;
 
 	while(index)
 	{
 		err = move_addr_to_kernel(index->ai_addr, index->ai_addrlen, &address);
 		if (err < 0)
 			goto out;
+
+		err = security_socket_connect(sock, (struct sockaddr *)&address, index->ai_addrlen);
+		if (err)
+		{ 
+			index = index->ai_next;
+			continue;
+		}
+		else
+		{
+			security_connect = 1;
+		}
+
 		struct addr_node * cur = kmalloc(sizeof(*cur), GFP_KERNEL);
 		struct sockaddr_storage * cpy_address = kmalloc(sizeof(*cpy_address), GFP_KERNEL);
 		memcpy(cpy_address, &address, sizeof(address));
@@ -1765,6 +1782,9 @@ SYSCALL_DEFINE3(connect_p, int, fd, struct addrinfo __user *, uservaddr,
 		prev = cur;
 		index = index->ai_next;
 	}	
+
+	if(!security_connect)
+		goto out_put;
 
 	printk(KERN_WARNING "SERHAT Linked list holding the server addresses is built\n");
 
@@ -1796,10 +1816,10 @@ out_put:
 	fput_light(sock->file, fput_needed);
 out:*/
 
-	sock = sockfd_lookup_light(fd, &err, &fput_needed);
-	if (!sock)
-		goto out;
 	err = sock->ops->connect_p(sock, head);
+
+out_put:
+	fput_light(sock->file, fput_needed);
 out:
 	return err;
 }
