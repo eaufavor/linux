@@ -1799,7 +1799,7 @@ out:*/
 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
 	if (!sock)
 		goto out;
-	err = sock->ops->connect_p(NULL, NULL, 0, 0);
+	err = sock->ops->connect_p(sock, head);
 out:
 	return err;
 }

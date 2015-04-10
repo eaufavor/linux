@@ -656,8 +656,7 @@ int inet_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 }
 EXPORT_SYMBOL(inet_stream_connect);
 
-int inet_stream_connect_p(struct socket *sock, struct sockaddr *uaddr,
-			int addr_len, int flags)
+int inet_stream_connect_p(struct socket *sock, struct addr_node *head)
 {
 	printk(KERN_WARNING "SERHAT: inet_stream_connect_p is called\n");
 	return 0;
