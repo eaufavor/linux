@@ -644,6 +644,15 @@ sock_error:
 }
 EXPORT_SYMBOL(__inet_stream_connect);
 
+int __inet_stream_connect_p(struct socket *sock, struct sockaddr *uaddr,
+			  int addr_len, int flags)
+{
+	//TODO
+	printk(KERN_WARNING "SERHAT: __inet_stream_connect_p is called\n");
+	return 0;
+}
+EXPORT_SYMBOL(__inet_stream_connect_p);
+
 int inet_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			int addr_len, int flags)
 {
@@ -656,11 +665,23 @@ int inet_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 }
 EXPORT_SYMBOL(inet_stream_connect);
 
-int inet_stream_connect_p(struct socket *sock, struct addr_node *head)
+int inet_stream_connect_p(struct socket *sock, struct addr_node *head, int flags)
 {
 	printk(KERN_WARNING "SERHAT: inet_stream_connect_p is called\n");
-	return 0;
-	//TODO
+	int err;
+
+	lock_sock(sock->sk);
+	struct addr_node * index = head;
+	while(index)
+	{
+		err = __inet_stream_connect_p(sock, index->addr, index->addrlen, flags);
+		if(err != 0)
+			break;
+		index = index->next;
+	}	
+	release_sock(sock->sk);
+	printk(KERN_WARNING "SERHAT: inet_stream_connect_p err code: %d\n", err);
+	return err;
 }
 EXPORT_SYMBOL(inet_stream_connect_p);
 

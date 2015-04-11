@@ -32,7 +32,13 @@ struct pipe_inode_info;
 struct inode;
 struct file;
 struct net;
-struct addr_node;
+
+struct addr_node
+{
+	struct sockaddr * addr;
+	int addrlen;
+	struct addr_node * next;
+};
 
 #define SOCK_ASYNC_NOSPACE	0
 #define SOCK_ASYNC_WAITDATA	1
@@ -137,7 +143,7 @@ struct proto_ops {
 				      struct sockaddr *vaddr,
 				      int sockaddr_len, int flags);
 	int		(*connect_p) (struct socket *sock,
-				      struct addr_node *head);
+				      struct addr_node *head, int flags);
 	int		(*socketpair)(struct socket *sock1,
 				      struct socket *sock2);
 	int		(*accept)    (struct socket *sock,

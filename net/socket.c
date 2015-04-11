@@ -159,13 +159,6 @@ static const struct file_operations socket_file_ops = {
 	.splice_read =	sock_splice_read,
 };
 
-struct addr_node
-{
-	struct sockaddr * addr;
-	int addrlen;
-	struct addr_node * next;
-};
-
 struct addrinfo {
     int              ai_flags;
     int              ai_family;
@@ -1816,7 +1809,7 @@ out_put:
 	fput_light(sock->file, fput_needed);
 out:*/
 
-	err = sock->ops->connect_p(sock, head);
+	err = sock->ops->connect_p(sock, head, sock->file->f_flags);
 
 out_put:
 	fput_light(sock->file, fput_needed);
